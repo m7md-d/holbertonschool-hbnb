@@ -1,19 +1,20 @@
+```mermaid
 classDiagram
     class PresentationLayer {
-        +API_Endpoints
-        +Services
+        API Endpoints
+        Services
     }
     class BusinessLogicLayer {
-        +User
-        +Place
-        +Amenity
-        +Review
+        User
+        Place
+        Amenity
+        Review
     }
     class PersistenceLayer {
-        +Repository
-        +Database
-        +Storage
+        Repository
+        Database
+        Storage
     }
 
-    PresentationLayer --> BusinessLogicLayer : Facade_Pattern
-    BusinessLogicLayer --> PersistenceLayer : Database_Operations
+    PresentationLayer --> BusinessLogicLayer : Facade Pattern
+    BusinessLogicLayer --> PersistenceLayer : Database Operations
