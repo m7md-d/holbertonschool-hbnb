@@ -6,6 +6,7 @@
 
 The goal of this project is to design and build a scalable application that manages the lifecycle of:
 - **Users:** Registration, authentication, and profile management.
+- **Owner:** create places and manage them.
 - **Places:** Listing properties and descriptions.
 - **Reviews:** User-generated feedback and ratings.
 - **Amenities:** Tagging system for property features.
@@ -37,3 +38,4 @@ For detailed documentation, please refer to the [`part1/`](./part1/) directory.
 
 ---
 *Holberton School - Software Engineering Track*
+
