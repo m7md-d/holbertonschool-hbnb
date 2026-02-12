@@ -11,7 +11,7 @@ A complete technical blueprint combining all diagrams, explanatory notes, and ar
 ---
 
 ## 🛠 Source Diagrams
-The raw Mermaid.js definitions for the diagrams included in the PDF are organized in the [`Diagrams/`](./Diagrams) directory for version control and future updates.
+The source definitions (**Mermaid.js**) and rendered artifacts (**PNG**) for the diagrams included in the PDF are organized in the [`Diagrams/`](./Diagrams) directory for version control and immediate reference.
 
 ### structure:
 * **High-Level Architecture:** 3-Layer Architecture & Facade Pattern.

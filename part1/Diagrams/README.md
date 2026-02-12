@@ -3,12 +3,12 @@
 This directory contains the technical documentation and architectural diagrams for the HBnB Evolution project.
 
 ## 1. High-Level Architecture
-- **File:** `0-PackageDiagram.md`
+- **File:** `0-PackageDiagram.png`
 - **Description:** Overview of the 3-layer architecture (Presentation, Business Logic, Persistence) using the Facade pattern.
 
 ## 2. Business Logic Layer
-- **File:** `1-ClassDiagram.md`
-- **Description:** Detailed class diagram representing the entities (User, Place, Review, Amenity) and their relationships.
+- **File:** `1-ClassDiagram.png`
+- **Description:** Detailed class diagram representing the entities (User, Owner, Place, Review, Amenity) and their relationships.
 
 ## 3. API Interaction Flows
 - **Directory:** `Sequence/`
