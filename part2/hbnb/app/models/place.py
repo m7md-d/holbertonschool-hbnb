@@ -1,13 +1,12 @@
 #!/usr/bin/python3
 import uuid
 from datetime import datetime
-from user import User
 from app.models.basemodel import BaseModel
 
 
 class Place(BaseModel):
 
-    def __init__(self, title: str, price: float, latitude: float, longitude: float, owner: User, description=''):
+    def __init__(self, title: str, price: float, latitude: float, longitude: float, owner, description=''):
         super().__init__()
         self.title = title
         self.description = description
@@ -68,14 +67,15 @@ class Place(BaseModel):
 
     @property
     def owner(self):
-        return self.__owner_id
+        return self.__owner
 
     @owner.setter
     def owner(self, value):
+        from app.models.user import User
         if not isinstance(value, User):
             raise TypeError('Owner must be an instance of User')
         else:
-            self.__owner_id = value.id
+            self.__owner = value
             super().save()
 
 
@@ -83,7 +83,7 @@ class Place(BaseModel):
 
 
     def add_review(self, value):
-        from review import Review
+        from app.models.review import Review
         if not isinstance(value, Review):
             raise TypeError('Value must be an instance of Review')
         else:
@@ -92,10 +92,25 @@ class Place(BaseModel):
 
 
     def add_amenity(self, value):
-        from amenity import Amenity
+        from app.models.amenity import Amenity
         if not isinstance(value, Amenity):
             raise TypeError('Value must be an instance of Amenity')
         else:
             self.amenities.add(value.id)
             super().save()
-
+    
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'title': self.title,
+            'description': self.description,
+            'price': self.price,
+            'latitude': self.latitude,
+            'longitude': self.longitude,
+            'owner': {
+                'id': self.owner.id,
+                'first_name': self.owner.first_name,
+                'last_name': self.owner.last_name,
+                'email': self.owner.email
+            }
+        }

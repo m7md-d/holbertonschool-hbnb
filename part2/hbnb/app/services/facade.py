@@ -16,7 +16,8 @@ class HBnBFacade:
         user = User(**user_data)
         self.user_repo.add(user)
         return user
-
+    def get_all_users(self):
+        return self.user_repo.get_all()
     def get_user(self, user_id):
         return self.user_repo.get(user_id)
 
@@ -58,6 +59,11 @@ class HBnBFacade:
     # Place Methods
     def create_place(self, place_data):
         try:
+            owner_id = place_data.pop('owner_id', None)
+            owner_obj = self.user_repo.get(owner_id)
+            if not owner_obj:
+                return False, "Owner not found. A valid User instance is required."
+            place_data['owner'] = owner_obj
             place = Place(**place_data)
             self.place_repo.add(place)
             return True, place
@@ -73,11 +79,11 @@ class HBnBFacade:
     def update_place(self, place_id, place_data):
         try:
             check_place = self.place_repo.get(place_id)
+            
             if not check_place:
                 return False, 'Place Not Found'
-             
-             place = self.place_repo.update(place_id, place_data)
-             return True, None
+            place = self.place_repo.update(place_id, place_data)
+            return True, None
         except (ValueError, TypeError) as e:
             return False, str(e)
 

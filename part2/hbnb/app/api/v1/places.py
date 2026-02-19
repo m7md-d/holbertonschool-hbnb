@@ -39,7 +39,7 @@ class PlaceList(Resource):
         success, result = facade.create_place(place_data)
         if not success:
             return {'error': result}, 400
-        return {'id': result.id, 'name': result.name, 'message': 'Place successfully created'}, 201
+        return {'id': result.id, 'title': result.title, 'message': 'Place successfully created'}, 201
 
 
 
@@ -47,8 +47,8 @@ class PlaceList(Resource):
     @api.response(200, 'List of places retrieved successfully')
     def get(self):
         """Retrieve a list of all places"""
-        facade.get_all_places()
-        return {'massage':'List of places retrieved successfully'}, 200
+        places = facade.get_all_places()
+        return [p.to_dict() for p in places], 200
 
 @api.route('/<place_id>')
 class PlaceResource(Resource):
@@ -58,7 +58,7 @@ class PlaceResource(Resource):
         """Get place details by ID"""
         place = facade.get_place(place_id)
         if place:
-            return {'id': place.id, 'title': place.title, 'description': place.description, "latitude": place.latitude, 'longitude': place.longitude, 'owner': place.owner, 'amenities': place.amenities}, 200
+            return place.to_dict(), 200
         return {'error': 'Place not found'}, 404
 
     @api.expect(place_model)
