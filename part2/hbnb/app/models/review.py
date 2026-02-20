@@ -12,8 +12,8 @@ class Review(BaseModel):
         super().__init__()
         self.text = text
         self.rating = rating
-        self.place = place
-        self.user = user
+        self.place_id = place
+        self.user_id = user
 
     @property
     def rating(self):
