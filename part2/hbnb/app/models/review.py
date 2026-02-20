@@ -21,11 +21,11 @@ class Review(BaseModel):
 
     @property
     def place(self):
-        return self.__place_id
+        return self.__place
 
     @property
     def user(self):
-        return self.__user_id
+        return self.__user
 
     @rating.setter
     def rating(self, value):
@@ -40,7 +40,7 @@ class Review(BaseModel):
         if not isinstance(value, Place):
             raise TypeError('The place must be a valid Place instance')
         else:
-            self.__place_id = value.id
+            self.__place = value.id
             super().save()
 
     @user.setter
@@ -48,5 +48,5 @@ class Review(BaseModel):
         if not isinstance(value, User):
             raise TypeError('The user must be a valid User instance')
         else:
-            self.__user_id = value.id
+            self.__user = value.id
             super().save()
