@@ -26,8 +26,8 @@ class ReviewList(Resource):
             'id': result.id, 
             'text': result.text, 
             'rating': result.rating, 
-            'user_id': result.user_id, 
-            'place_id': result.place_id
+            'user_id': result.user, 
+            'place_id': result.place
         }, 201
 
     @api.response(200, 'List of reviews retrieved successfully')
@@ -52,8 +52,8 @@ class ReviewResource(Resource):
                 'id': review.id, 
                 'text': review.text, 
                 'rating': review.rating, 
-                'user_id': review.user_id, 
-                'place_id': review.place_id
+                'user_id': review.user, 
+                'place_id': review.place
             }, 200
         return {'error': 'Review not found'}, 404
 
