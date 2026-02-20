@@ -10,11 +10,20 @@ amenity_model = api.model('PlaceAmenity', {
     'name': fields.String(description='Name of the amenity')
 })
 
+# Define the user model for output documentation (not used for input validation here)
 user_model = api.model('PlaceUser', {
     'id': fields.String(description='User ID'),
     'first_name': fields.String(description='First name of the owner'),
     'last_name': fields.String(description='Last name of the owner'),
     'email': fields.String(description='Email of the owner')
+})
+
+# Define the review model for output documentation (not used for input validation here)
+review_model = api.model('PlaceReview', {
+    'id': fields.String(description='Review ID'),
+    'text': fields.String(description='Text of the review'),
+    'rating': fields.Integer(description='Rating of the place (1-5)'),
+    'user_id': fields.String(description='ID of the user')
 })
 
 # Define the place model for input validation and documentation
@@ -25,7 +34,8 @@ place_model = api.model('Place', {
     'latitude': fields.Float(required=True, description='Latitude of the place'),
     'longitude': fields.Float(required=True, description='Longitude of the place'),
     'owner_id': fields.String(required=True, description='ID of the owner'),
-    'amenities': fields.List(fields.String, required=True, description="List of amenities ID's")
+    'amenities': fields.List(fields.String, required=True, description="List of amenities ID's"),
+    'reviews': fields.List(fields.Nested(review_model), description='List of reviews')
 })
 
 @api.route('/')
@@ -75,4 +85,19 @@ class PlaceResource(Resource):
             return {'error': result}, 404
         return {'error': result}, 400
         
-
+@api.route('/<place_id>/reviews')
+class PlaceReviewList(Resource):
+    @api.response(200, 'List of reviews for the place retrieved successfully')
+    @api.response(404, 'Place not found')
+    def get(self, place_id):
+        """Get all reviews for a specific place"""
+        place = facade.get_place(place_id)
+        if not place:
+            return {'error': 'Place not found'}, 404
+            
+        reviews = facade.get_reviews_by_place(place_id)
+        return [{
+            'id': r.id, 
+            'text': r.text, 
+            'rating': r.rating
+        } for r in reviews], 200
