@@ -32,17 +32,16 @@ class HBnBFacade:
     def get_user_by_email(self, email):
         return self.user_repo.get_by_attribute('email', email)
     
-    
     def update_user(self, user_id, user_data):
         try:
             check_user = self.user_repo.get(user_id)
             if not check_user:
                 return False, 'User Not Found'
-
-            self.user_repo.update(user_id, user_data)
+             
+            user = self.place_repo.update(user_id, user_data)
             return True, None
         except (ValueError, TypeError) as e:
-            return False, str(e) 
+            return False, str(e)
 
     # Amenity Methods
     def create_amenity(self, amenity_data):
