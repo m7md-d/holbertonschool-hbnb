@@ -115,7 +115,28 @@ class HBnBFacade:
     # review methods
     def create_review(self, review_data):
         try:
-            review = Review(**review_data)
+            # 1. Check for required fields and extract them
+            user_id = review_data.get('user_id')
+            place_id = review_data.get('place_id')
+
+            # 2. Retrieve the related User and Place objects using their repositories
+            user_obj = self.user_repo.get(user_id)
+            place_obj = self.place_repo.get(place_id)
+
+            if not user_obj:
+                return False, "User not found"
+            if not place_obj:
+                return False, "Place not found"
+
+            # 3. Create the Review instance with the retrieved User and Place objects
+            review_params = {
+                "text": review_data.get('text'),
+                "rating": review_data.get('rating'),
+                "user": user_obj,
+                "place": place_obj
+            }
+
+            review = Review(**review_params)
             self.review_repo.add(review)
             return True, review
         except (ValueError, TypeError) as e:
@@ -128,18 +149,26 @@ class HBnBFacade:
         return self.review_repo.get_all()
 
     def get_reviews_by_place(self, place_id):
-        return self.review_repo.get_by_attribute('place_id', place_id)
-    
+        # Check if the place exists first (optional but good practice)
+        if not self.place_repo.get(place_id):
+            return None
+        # Get all reviews and filter by place_id
+        all_reviews = self.review_repo.get_all()
+        return [r for r in all_reviews if r.place == place_id]
+
     def update_review(self, review_id, review_data):
         try:
             review = self.review_repo.get(review_id)
-            if not che_review:
+            if not review:
                 return False, 'Review Not Found'
-            review = self.review_repo.update(review_id, review_data)
-            return True, None
+            
+            updated_review = self.review_repo.update(review_id, review_data)
+            return True, updated_review
         except (ValueError, TypeError) as e:
             return False, str(e)
 
-
     def delete_review(self, review_id):
+        if not self.review_repo.get(review_id):
+            return False
         self.review_repo.delete(review_id)
+        return True
