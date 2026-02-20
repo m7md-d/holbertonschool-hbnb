@@ -23,8 +23,10 @@ class UserList(Resource):
         if existing_user:
             return {'error': 'Email already registered'}, 400
 
-        new_user = facade.create_user(user_data)
-        return {'id': new_user.id, 'first_name': new_user.first_name, 'last_name': new_user.last_name, 'email': new_user.email}, 201
+        success, result = facade.create_user(user_data)
+        if not success:
+            return {'error': result}, 400
+        return {'id': result.id, 'first_name': result.first_name, 'last_name': result.last_name, 'email': result.email}, 201
         
     
     @api.response(200, 'users is fetched')
@@ -55,9 +57,11 @@ class UserResource(Resource):
         user = facade.get_user(user_id)
         if not user:
             return {'error': 'User not found'}, 404
-        update_user = facade.update_user(user_id, user_data)
-        if update_user:
-            return{'message': 'User updated successfully'}, 200
+        success, msg = facade.update_user(user_id, user_data)
+        if success:
+            return {'message': 'User updated successfully'}, 200
         else:
-            return {'error': 'invalid input'}, 400
+            if msg == 'User Not Found':
+                return {'error': msg}, 404
+            return {'error': msg}, 400
         

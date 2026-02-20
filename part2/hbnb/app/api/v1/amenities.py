@@ -20,11 +20,11 @@ class AmenityList(Resource):
         existing_amenity = facade.get_amenity_by_name(amenity_data['name'])
         if existing_amenity:
             return {'error': 'Invalid input data'}, 400
-        new_amenity = facade.create_amenity(amenity_data)
-        if new_amenity:
-            return {'id': new_amenity.id, 'name': new_amenity.name}, 201
+        success, result = facade.create_amenity(amenity_data)
+        if success:
+            return {'id': result.id, 'name': result.name}, 201
         else:
-            return {'error': 'Invalid input data'}, 400
+            return {'error': result}, 400
 
     @api.response(200, 'List of amenities retrieved successfully')
     def get(self):
@@ -50,12 +50,10 @@ class AmenityResource(Resource):
     def put(self, amenity_id):
         """Update an amenity's information"""
         amenity_data = api.payload
-        amenity = facade.get_amenity(amenity_id)
-        if not amenity:
-            return {'error': 'Amenity not found'}, 404
-        update_state = facade.update_amenity(amenity.id, amenity_data)
-        if update_state:
-            return {'message': 'Amenity updated successfully'}, 200
-        else:
-            return {'error': 'Invalid input data'}, 400
+        success, msg = facade.update_amenity(amenity_id, amenity_data)
+        if not success:
+            if msg == 'Amenity Not Found':
+                return {'error': msg}, 404
+            return {'error': msg}, 400
+        return {'message': 'Amenity updated successfully'}, 200
 

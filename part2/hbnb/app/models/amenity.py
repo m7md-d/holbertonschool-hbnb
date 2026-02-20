@@ -16,8 +16,11 @@ class Amenity(BaseModel):
     
     @name.setter
     def name(self, value):
+
+        if not value:
+            raise ValueError('Enter a Name')
+        
         if len(value) > 50:
             raise ValueError('Name cannot exceed 50 characters')
-        else:
-            self.__name = value
-            super().save()
+        
+        self.__name = value.strip().upper()

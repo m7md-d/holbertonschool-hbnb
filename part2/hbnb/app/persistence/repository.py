@@ -32,6 +32,7 @@ class InMemoryRepository(Repository):
 
     def add(self, obj):
         self._storage[obj.id] = obj
+        obj.save()
 
     def get(self, obj_id):
         return self._storage.get(obj_id)
@@ -43,6 +44,7 @@ class InMemoryRepository(Repository):
         obj = self.get(obj_id)
         if obj:
             obj.update(data)
+            obj.save()
 
     def delete(self, obj_id):
         if obj_id in self._storage:

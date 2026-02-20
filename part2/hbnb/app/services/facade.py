@@ -12,25 +12,37 @@ class HBnBFacade:
         self.review_repo = InMemoryRepository()
         self.amenity_repo = InMemoryRepository()
 
+    
+    #User Method
     def create_user(self, user_data):
-        user = User(**user_data)
-        self.user_repo.add(user)
-        return user
+        try:
+            user = User(**user_data)
+            self.user_repo.add(user)
+            return True, user
+        except (TypeError, ValueError) as e:
+            return False, str(e)
+
     def get_all_users(self):
         return self.user_repo.get_all()
+    
     def get_user(self, user_id):
         return self.user_repo.get(user_id)
     
-    def get_alluser(self):
-        return self.user_repo.get(self)
 
     def get_user_by_email(self, email):
         return self.user_repo.get_by_attribute('email', email)
     
-    def update_user(self):
-        return()
+    
+    def update_user(self, user_id, user_data):
+        try:
+            check_user = self.user_repo.get(user_id)
+            if not check_user:
+                return False, 'User Not Found'
 
-
+            self.user_repo.update(user_id, user_data)
+            return True, None
+        except (ValueError, TypeError) as e:
+            return False, str(e) 
 
     # Amenity Methods
     def create_amenity(self, amenity_data):
@@ -84,10 +96,17 @@ class HBnBFacade:
 
     def update_place(self, place_id, place_data):
         try:
-            check_place = self.place_repo.get(place_id)
-            
-            if not check_place:
+            place = self.place_repo.get(place_id)
+            if not place:
                 return False, 'Place Not Found'
+            
+            if 'owner_id' in place_data:
+                new_owner_id = place_data.pop('owner_id')
+                new_owner = self.user_repo.get(new_owner_id)
+                if not new_owner:
+                    return False, "New owner not found"
+                place.owner = new_owner
+
             place = self.place_repo.update(place_id, place_data)
             return True, None
         except (ValueError, TypeError) as e:
@@ -98,10 +117,10 @@ class HBnBFacade:
     def create_review(self, review_data):
         try:
             review = Review(**review_data)
-        except (ValueError, TypeError):
-            return False
-        self.review_repo.add(review)
-        return review
+            self.review_repo.add(review)
+            return True, review
+        except (ValueError, TypeError) as e:
+            return False, str(e)
 
     def get_review(self, review_id):
         return self.review_repo.get(review_id)
@@ -111,9 +130,17 @@ class HBnBFacade:
 
     def get_reviews_by_place(self, place_id):
         return self.review_repo.get_by_attribute('place_id', place_id)
-
+    
     def update_review(self, review_id, review_data):
-        return self.review_repo.update(review_id, review_data)
+        try:
+            review = self.review_repo.get(review_id)
+            if not che_review:
+                return False, 'Review Not Found'
+            review = self.review_repo.update(review_id, review_data)
+            return True, None
+        except (ValueError, TypeError) as e:
+            return False, str(e)
+
 
     def delete_review(self, review_id):
         self.review_repo.delete(review_id)

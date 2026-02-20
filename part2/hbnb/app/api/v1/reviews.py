@@ -19,11 +19,10 @@ class ReviewList(Resource):
     def post(self):
         """Register a new review"""
         review_data = api.payload
-        review = facade.create_review(review_data)
-        if not review:
-            api.abort(400, 'Invalid input data')
-        else:
-            api.response(201, 'Review successfully created')(review)
+        success, result = facade.create_review(review_data)
+        if not success:
+            return {'error': result}, 400
+        return {'id': result.id, 'text': result.text, 'rating': result.rating, 'user_id': result.user_id, 'place_id': result.place_id}, 201
 
     @api.response(200, 'List of reviews retrieved successfully')
     def get(self):
@@ -51,14 +50,12 @@ class ReviewResource(Resource):
     def put(self, review_id):
         """Update a review's information"""
         review_data = api.payload
-        review = facade.get_review(review_id)
-        if not review:
-            api.abort(404, 'Review not found')
-        updated_review = facade.update_review(review_id, review_data)
-        if not updated_review:
-            api.abort(400, 'Invalid input data')
-        api.response(200, 'Review updated successfully')(updated_review)
-        return updated_review, 200
+        success, msg = facade.update_review(review_id, review_data)
+        if not success:
+            if msg == 'Review Not Found':
+                return {'error': msg}, 404
+            return {'error': msg}, 400
+        return {'message': 'Review updated successfully'}, 200
 
     @api.response(200, 'Review deleted successfully')
     @api.response(404, 'Review not found')
