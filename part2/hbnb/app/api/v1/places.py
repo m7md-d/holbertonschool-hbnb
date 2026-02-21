@@ -34,13 +34,13 @@ place_model = api.model('Place', {
     'latitude': fields.Float(required=True, description='Latitude of the place'),
     'longitude': fields.Float(required=True, description='Longitude of the place'),
     'owner_id': fields.String(required=True, description='ID of the owner'),
-    'amenities': fields.List(fields.String, required=True, description="List of amenities ID's"),
+    'amenities': fields.List(fields.String, description="List of amenities ID's"),
     'reviews': fields.List(fields.Nested(review_model), description='List of reviews')
 })
 
 @api.route('/')
 class PlaceList(Resource):
-    @api.expect(place_model)
+    @api.expect(place_model, validate=True)
     @api.response(201, 'Place successfully created')
     @api.response(400, 'Invalid input data')
     def post(self):
@@ -49,7 +49,7 @@ class PlaceList(Resource):
         success, result = facade.create_place(place_data)
         if not success:
             return {'error': result}, 400
-        return {'id': result.id, 'title': result.title, 'message': 'Place successfully created'}, 201
+        return result.to_dict(), 201
 
 
 

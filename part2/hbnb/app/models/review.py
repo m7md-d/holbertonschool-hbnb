@@ -33,7 +33,6 @@ class Review(BaseModel):
             raise ValueError('Rating must be an integer between 1 and 5')
         else:
             self.__rating = value
-            super().save()
 
     @place.setter
     def place(self, value):
@@ -41,7 +40,6 @@ class Review(BaseModel):
             raise TypeError('The place must be a valid Place instance')
         else:
             self.__place = value.id
-            super().save()
 
     @user.setter
     def user(self, value):
@@ -49,4 +47,3 @@ class Review(BaseModel):
             raise TypeError('The user must be a valid User instance')
         else:
             self.__user = value.id
-            super().save()

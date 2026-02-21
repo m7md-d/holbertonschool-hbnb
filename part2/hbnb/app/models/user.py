@@ -23,7 +23,6 @@ class User(BaseModel):
             raise ValueError('First name must not exceed 50 characters')
         else:
             self.__first_name = value
-            super().save()
 
     @property
     def last_name(self):
@@ -35,7 +34,6 @@ class User(BaseModel):
             raise ValueError('Last name must not exceed 50 characters')
         else:
             self.__last_name = value
-            super().save()
 
     @property
     def email(self):
@@ -47,4 +45,9 @@ class User(BaseModel):
         if not re.match(pattern, value):
             raise ValueError(f"Invalid email format: {value}")
         self.__email = value
-        super().save()
+
+    def add_place(self, place):
+        from app.models.place import Place
+        if not isinstance(place, Place):
+            raise TypeError('Value must be an instance of Place')
+        self.places.add(place.id)

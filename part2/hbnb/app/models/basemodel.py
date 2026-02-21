@@ -12,7 +12,7 @@ class BaseModel:
         self.updated_at = datetime.now()
 
     def update(self, data):
-        protected_fields = ['id', 'created_at', 'updated_at', 'owner_id']
+        protected_fields = ['id', 'created_at', 'updated_at']
 
         for key, value in data.items():
             if key in protected_fields:

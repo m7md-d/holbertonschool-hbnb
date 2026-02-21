@@ -15,7 +15,7 @@ class Place(BaseModel):
         self.longitude = longitude
         self.owner = owner
         self.reviews = []
-        self.amenities = set()
+        self.amenities = []
 
     @property
     def title(self):
@@ -27,7 +27,6 @@ class Place(BaseModel):
             raise ValueError('Title must be 100 characters or less')
         else:
             self.__title = value
-            super().save()
 
     @property
     def price(self):
@@ -39,7 +38,6 @@ class Place(BaseModel):
             raise ValueError('Price must be a positive value')
         else:
             self.__price = float(value)
-            super().save()
 
     @property
     def latitude(self):
@@ -51,7 +49,6 @@ class Place(BaseModel):
             raise ValueError('Latitude must be between -90.0 and 90.0')
         else:
             self.__latitude = value
-            super().save()
 
     @property
     def longitude(self):
@@ -63,7 +60,6 @@ class Place(BaseModel):
             raise ValueError('Longitude must be between -180.0 and 180.0')
         else:
             self.__longitude = value
-            super().save()
 
     @property
     def owner(self):
@@ -76,7 +72,6 @@ class Place(BaseModel):
             raise TypeError('Owner must be an instance of User')
         else:
             self.__owner = value
-            super().save()
 
 
    
@@ -86,18 +81,17 @@ class Place(BaseModel):
         from app.models.review import Review
         if not isinstance(value, Review):
             raise TypeError('Value must be an instance of Review')
-        else:
-            self.reviews.append(value.id)
-            super().save()
+        if value not in self.reviews:
+            self.reviews.append(value)
+            
 
 
     def add_amenity(self, value):
         from app.models.amenity import Amenity
         if not isinstance(value, Amenity):
             raise TypeError('Value must be an instance of Amenity')
-        else:
-            self.amenities.add(value.id)
-            super().save()
+        if value.id not in self.amenities:
+            self.amenities.append(value.id)
     
     def to_dict(self):
         return {
@@ -112,5 +106,7 @@ class Place(BaseModel):
                 'first_name': self.owner.first_name,
                 'last_name': self.owner.last_name,
                 'email': self.owner.email
-            }
+            },
+            'amenities': self.amenities,
+            'reviews': [{'id': r.id, 'text': r.text, 'rating': r.rating, 'user_id': r.user} for r in self.reviews]
         }

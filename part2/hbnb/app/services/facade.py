@@ -38,7 +38,7 @@ class HBnBFacade:
             if not check_user:
                 return False, 'User Not Found'
              
-            user = self.place_repo.update(user_id, user_data)
+            user = self.user_repo.update(user_id, user_data)
             return True, None
         except (ValueError, TypeError) as e:
             return False, str(e)
@@ -76,13 +76,19 @@ class HBnBFacade:
     # Place Methods
     def create_place(self, place_data):
         try:
+            amenity_ids = place_data.pop('amenities', [])
             owner_id = place_data.pop('owner_id', None)
             owner_obj = self.user_repo.get(owner_id)
             if not owner_obj:
                 return False, "Owner not found. A valid User instance is required."
             place_data['owner'] = owner_obj
             place = Place(**place_data)
+            for amenity_id in amenity_ids:
+                amenity = self.amenity_repo.get(amenity_id)
+                if amenity:
+                    place.add_amenity(amenity)
             self.place_repo.add(place)
+            owner_obj.add_place(place) 
             return True, place
         except (TypeError, ValueError) as e:
             return False, str(e)
@@ -104,9 +110,24 @@ class HBnBFacade:
                 new_owner = self.user_repo.get(new_owner_id)
                 if not new_owner:
                     return False, "New owner not found"
+
+                old_owner = place.owner
+                if place.id in old_owner.places:
+                    old_owner.places.remove(place.id)
+                new_owner.add_place(place)
                 place.owner = new_owner
 
+            amenity_ids = place_data.pop('amenities', None)
+            
             place = self.place_repo.update(place_id, place_data)
+            
+            if amenity_ids is not None:
+                place.amenities = [] 
+                for amenity_id in amenity_ids:
+                    amenity = self.amenity_repo.get(amenity_id)
+                    if amenity:
+                        place.add_amenity(amenity)
+            
             return True, None
         except (ValueError, TypeError) as e:
             return False, str(e)
@@ -137,6 +158,8 @@ class HBnBFacade:
             }
 
             review = Review(**review_params)
+            if hasattr(place_obj, 'reviews'):
+                place_obj.add_review(review)
             self.review_repo.add(review)
             return True, review
         except (ValueError, TypeError) as e:
@@ -149,26 +172,35 @@ class HBnBFacade:
         return self.review_repo.get_all()
 
     def get_reviews_by_place(self, place_id):
-        # Check if the place exists first (optional but good practice)
-        if not self.place_repo.get(place_id):
+        
+        place = self.place_repo.get(place_id)
+        if not place:
             return None
-        # Get all reviews and filter by place_id
-        all_reviews = self.review_repo.get_all()
-        return [r for r in all_reviews if r.place == place_id]
-
+        return place.reviews if hasattr(place, 'reviews') else []
+    
     def update_review(self, review_id, review_data):
         try:
             review = self.review_repo.get(review_id)
             if not review:
                 return False, 'Review Not Found'
             
-            updated_review = self.review_repo.update(review_id, review_data)
-            return True, updated_review
+            review_data.pop('user_id', None)
+            review_data.pop('place_id', None)
+            review_data.pop('user', None)
+            review_data.pop('place', None)
+
+            self.review_repo.update(review_id, review_data)
+            return True, None
         except (ValueError, TypeError) as e:
             return False, str(e)
 
     def delete_review(self, review_id):
-        if not self.review_repo.get(review_id):
-            return False
+        review = self.review_repo.get(review_id)
+        if not review:
+            return False, 'Review Not Found'
+        place = self.place_repo.get(review.place)
+        if place and hasattr(place, 'reviews'):
+            if review in place.reviews:
+                place.reviews.remove(review)
         self.review_repo.delete(review_id)
-        return True
+        return True, None
