@@ -5,9 +5,10 @@ from app.api.v1.users import api as users_ns
 from app.api.v1.reviews import api as reviews_ns
 from app.api.v1.places import api as place_ns
 from flask_jwt_extended import JWTManager
+from flask_bcrypt import Bcrypt
 
 jwt = JWTManager()
-
+bcrypt = Bcrypt()
 def create_app(config_class="config.DevelopmentConfig"):
     app = Flask(__name__)
     app.config.from_object(config_class)
@@ -19,5 +20,6 @@ def create_app(config_class="config.DevelopmentConfig"):
     api.add_namespace(place_ns, path='/api/v1/places')
 
     jwt.init_app(app)
+    bcrypt.init_app(app)
 
     return app

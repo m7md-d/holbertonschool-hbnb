@@ -6,7 +6,8 @@ api = Namespace('users', description='Users operations')
 user_model = api.model('User', {
     'first_name': fields.String(required=True, description='first name of the user'),
     'last_name': fields.String(required=True, description='last name of the user'),
-    'email': fields.String(required=True, description='Email address of the user')
+    'email': fields.String(required=True, description='Email address of the user'),
+    'password': fields.String(required=True, description='Password of the User')
 })
 
 @api.route('/')
