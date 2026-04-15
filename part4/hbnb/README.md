@@ -10,9 +10,9 @@ The system now features a functional client-side web application built with HTML
 
 ### Prerequisites
 
-* Python 3.8 or higher.
-* SQLite3 or MySQL depending on environment configuration.
-* A modern web browser.
+- Python 3.8 or higher.
+- SQLite3 or MySQL depending on environment configuration.
+- A modern web browser.
 
 ### Installation Instructions
 
@@ -44,12 +44,12 @@ sqlite3 instance/development.db < seed.sql
 
 These scripts create the database schema and populate initial data such as the **Admin user** and basic **Amenities**.
 
-*(Adjust the command if using a different SQL database system according to your configuration.)*
+_(Adjust the command if using a different SQL database system according to your configuration.)_
 
 ### Running the Application
 
 1. **Start the Backend API Server:**
-From the `hbnb/` directory, execute the script to start the local web server:
+   From the `hbnb/` directory, execute the script to start the local web server:
 
 ```bash
 python3 run.py
@@ -58,7 +58,23 @@ python3 run.py
 The API application will launch, running by default on `http://127.0.0.1:8080/`. You can browse the interactive Swagger UI and test the secured endpoints by navigating to `http://127.0.0.1:8080/api/v1/`.
 
 2. **Access the Frontend Application:**
-Open the frontend HTML files (e.g., `index.html`) located in the root of the project directly in your browser, or start a simple Python static server in the directory containing the HTML files.
+   Open the frontend HTML files (e.g., `index.html`) located in the root of the project directly in your browser, or start a simple Python static server in the directory containing the HTML files.
+
+### Testing Login Functionality
+
+Use `login.html` to validate authentication behavior end-to-end:
+
+1. **Valid credentials:**
+   Enter a seeded user email/password and submit. You should be redirected to `index.html`.
+
+2. **Token/cookie behavior:**
+   Open browser DevTools after a successful login and confirm auth cookies are present (set by the backend), and that the frontend `token` cookie exists.
+
+3. **Invalid credentials:**
+   Submit an incorrect email or password. You should see an error message: `Invalid credentials`.
+
+4. **Network/API failure case:**
+   If the API is down or unreachable, the UI should show: `Login failed. Please try again.`
 
 ---
 
@@ -68,20 +84,20 @@ The project builds upon the architecture established in prior parts and extends 
 
 ### Backend Structure (`hbnb/`)
 
-* **`app/`**: The core API application module.
-  * **`api/v1/`**: The API routing layer handling endpoints (auth, users, places, reviews, amenities).
-  * **`models/`**: The Domain Layer. Contains the SQLAlchemy models. Key models like `Place` have been expanded to include comprehensive properties like `max_guests`, `city`, and `image_url`.
-  * **`services/`**: The Business Logic layer and Facade design pattern.
-  * **`persistence/`**: The Storage layer using SQLAlchemy ORM.
-* **`schema.sql`** & **`seed.sql`**: Database initialization scripts mirroring the models.
-* **`tests/`**: Automated test files.
-* **`run.py`**: The API execution entry-point.
+- **`app/`**: The core API application module.
+  - **`api/v1/`**: The API routing layer handling endpoints (auth, users, places, reviews, amenities).
+  - **`models/`**: The Domain Layer. Contains the SQLAlchemy models. Key models like `Place` have been expanded to include comprehensive properties like `max_guests`, `city`, and `image_url`.
+  - **`services/`**: The Business Logic layer and Facade design pattern.
+  - **`persistence/`**: The Storage layer using SQLAlchemy ORM.
+- **`schema.sql`** & **`seed.sql`**: Database initialization scripts mirroring the models.
+- **`tests/`**: Automated test files.
+- **`run.py`**: The API execution entry-point.
 
 ### Frontend Structure
 
 Located primarily outside the `hbnb/` backend folder, the frontend consists of:
 
-* **HTML Views**: `index.html`, `login.html`, `place.html`, `add_review.html`, `admin.html` representing distinct screens and workflows.
-* **`styles.css`**: The central CSS file containing design tokens and component styling.
-* **`js/`**: Contains modularized JavaScript logic (e.g., `scripts.js`, authentication checks, api wrappers) for dynamic content fetching and interaction.
-* **`images/`**: Static assets, including site backgrounds and specific amenity icons.
+- **HTML Views**: `index.html`, `login.html`, `place.html`, `add_review.html`, `admin.html` representing distinct screens and workflows.
+- **`styles.css`**: The central CSS file containing design tokens and component styling.
+- **`js/`**: Contains modularized JavaScript logic (e.g., `scripts.js`, authentication checks, api wrappers) for dynamic content fetching and interaction.
+- **`images/`**: Static assets, including site backgrounds and specific amenity icons.
